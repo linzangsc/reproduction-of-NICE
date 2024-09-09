@@ -46,7 +46,7 @@ class Trainer:
                 images = images.to(self.device)
                 labels = labels.to(self.device)
                 self.optimizer.zero_grad()
-                z = self.model.reverse_mapping(images)
+                z = self.model(images)
                 loss = self.loss(z)
                 loss.backward()
                 self.optimizer.step()
@@ -56,9 +56,8 @@ class Trainer:
             self.save_model(self.config['ckpt_path'])
             with torch.no_grad():
                 z = torch.randn((16, 1, self.image_size, self.image_size)).to(self.device)
-                sample_image = self.model(z)
+                sample_image = self.model.reverse_mapping(z)
                 self.visualize_samples(sample_image, epoch)
-                # self.visualize_latent_space(epoch)
 
     def save_model(self, output_path):
         if not os.path.exists(output_path): os.mkdir(output_path)
